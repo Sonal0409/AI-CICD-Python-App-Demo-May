@@ -1,0 +1,8 @@
+# Generate requirements.txt for a Python Flask CI/CD project
+# Project uses:
+# - Flask web application (app.py)
+# - pytest for testing
+# - OpenAI Python SDK (new version >=1.0.0)
+flask
+pytest 
+openai>=1.0.0

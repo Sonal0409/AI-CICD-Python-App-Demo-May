@@ -1,0 +1,46 @@
+# write jenkins pipeline declarative code 
+# agent any
+# stages to fetch code form github repo 
+# stage to run generate_test.py script 
+# stage to run test cases using pytest 
+# stage to build dockefile
+# add stage that will use credentials plugin to create a varibale with dockerhub username and password
+# stage to login to dockerhub using the credentials variable    
+# stage to push docker image
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Fetch Code') {
+            steps {
+                git ''
+            }
+        }   
+        stage('Generate Test') {
+            steps {
+                sh 'python generate_test.py'
+            }
+        }
+        stage('Run Test Cases') {
+            steps {
+                sh 'pytest'
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t myapp:latest .'
+            }
+        }   
+        stage('Login to DockerHub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
+                    sh 'echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin'
+                }
+            }
+        }       
+        stage('Push Docker Image') {
+            steps {
+                sh 'docker push $DOCKERHUB_USERNAME/myapp:latest'
+            }
+        }
